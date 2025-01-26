@@ -34,20 +34,6 @@ samples, guidance on mobile development, and a full API reference.
 - tearDown
 - tearDownAll
 
-### Mock
-
-- `mockito` need a code generation.
-- `mocktail`
-    - Mock
-    - when
-    - thenReturn - untuk data yang bersifat sinkron
-    - thenAnswer - untuk data yang bersifat asinkron
-    - thenThrow
-    - verify
-- 
-
-### Cheatsheet
-
 ## Widget Test
 
 ## Integration Test
