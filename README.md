@@ -44,12 +44,26 @@ samples, guidance on mobile development, and a full API reference.
     - thenAnswer - untuk data yang bersifat asinkron
     - thenThrow
     - verify
-- 
 
-### Cheatsheet
+## Flutter test coverage
 
-## Widget Test
+```text
+flutter test --coverage
 
-## Integration Test
+// Mac
+brew install lcov
 
-## ...
+// Windows
+choco install lcov
+
+// Windows
+perl $env:GENHTML coverage\lcov.info -o coverage\html
+perl %GENHTML% coverage\lcov.info -o coverage\html 
+ 
+// Linux Mac
+genhtml coverage/lcov.info -o coverage/html
+
+
+open coverage/html/index.html
+start coverage/html/index.html
+```
