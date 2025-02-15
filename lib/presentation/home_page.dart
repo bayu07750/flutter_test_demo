@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test_demo/app_router.dart';
 import 'package:flutter_test_demo/model/todo.dart';
-import 'package:flutter_test_demo/presentation/detail_page.dart';
 import 'package:flutter_test_demo/provider/home_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -66,10 +66,9 @@ class HomePage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => DetailPage(id: todos[index].id),
-                          ),
+                        Navigator.of(context).pushNamed(
+                          AppRouter.detail,
+                          arguments: todos[index].id,
                         );
                       },
                       child: ListTile(
