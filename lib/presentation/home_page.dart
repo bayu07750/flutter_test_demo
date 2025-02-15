@@ -16,6 +16,14 @@ class HomePage extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             title: Text('Todos'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AppRouter.notification);
+                },
+                icon: const Icon(Icons.notifications),
+              ),
+            ],
           ),
           body: Stack(
             children: [
