@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test_demo/notification/local_notification_service.dart';
+import 'package:flutter_test_demo/provider/notification_provider.dart';
 import 'package:flutter_test_demo/utils/random.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,7 @@ class NotificationPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Text('Notification permission: ${context.watch<NotificationProvider>().isNotificationGranted}'),
           ElevatedButton(
             onPressed: () {
               _showNotification(context);

@@ -10,6 +10,7 @@ import 'package:flutter_test_demo/notification/local_notification_service.dart';
 import 'package:flutter_test_demo/presentation/detail_page.dart';
 import 'package:flutter_test_demo/presentation/home_page.dart';
 import 'package:flutter_test_demo/presentation/notification_page.dart';
+import 'package:flutter_test_demo/provider/notification_provider.dart';
 import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +44,6 @@ class MyApp extends StatelessWidget {
           create: (context) {
             return LocalNotificationService()
               ..init()
-              ..requestPermission()
               ..configureLocalTimeZone();
           },
           lazy: false,
@@ -60,7 +60,14 @@ class MyApp extends StatelessWidget {
           initialRoute: AppRouter.initial,
           routes: {
             AppRouter.initial: (context) => HomePage(),
-            AppRouter.notification: (context) => const NotificationPage(),
+            AppRouter.notification: (context) => ChangeNotifierProvider(
+                  create: (context) {
+                    return NotificationProvider(localNotificationService: context.read())..requestPermission();
+                  },
+                  builder: (context, child) {
+                    return const NotificationPage();
+                  },
+                ),
             AppRouter.detail: (context) {
               final id = ModalRoute.of(context)!.settings.arguments as int;
               return DetailPage(id: id);
