@@ -47,7 +47,11 @@ class NotificationPage extends StatelessWidget {
     final title = 'Todo $todoId';
     final body = 'This is the body of Todo $todoId';
     notificationService.showNotification(
-        id: Random.generateRandom(), title: title, body: body, payload: todoId.toString());
+      id: Random.generateRandom(),
+      title: title,
+      body: body,
+      payload: todoId.toString(),
+    );
   }
 
   void _scheduleNotification(BuildContext context) {

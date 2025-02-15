@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test_demo/model/todo.dart';
 import 'package:flutter_test_demo/provider/detail_provider.dart';
+import 'package:flutter_test_demo/work/work_manager_service.dart';
 import 'package:provider/provider.dart';
 
 class DetailPage extends StatelessWidget {
@@ -70,6 +71,14 @@ class DetailPage extends StatelessWidget {
                     children: [
                       Text('Title: ${todo.title}'),
                       Text('Completed: ${todo.completed}'),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<WorkmanagerService>().runOneOffTask(
+                                payload: todo.id.toString(),
+                              );
+                        },
+                        child: Text('Show Notification'),
+                      ),
                     ],
                   ),
                 );
