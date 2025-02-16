@@ -72,6 +72,19 @@ class _NotificationPageState extends State<NotificationPage> {
               },
               child: Text('Jangan Bangunkan Sholat Shubuh'),
             ),
+            SizedBox(
+              height: 32,
+            ),
+            SizedBox(
+              width: 300,
+              child: Text(
+                'Scheduling Periodic Task using Workmanger every 15 minutes',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(
+              height: 32,
+            ),
             ElevatedButton(
               onPressed: () {
                 _runPeriodicTask(context);
