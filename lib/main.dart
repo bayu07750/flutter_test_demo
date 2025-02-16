@@ -80,7 +80,8 @@ class MyApp extends StatelessWidget {
           create: (context) {
             return LocalNotificationService()
               ..init()
-              ..configureLocalTimeZone();
+              ..configureLocalTimeZone()
+              ..requestPermission();
           },
           lazy: false,
         ),

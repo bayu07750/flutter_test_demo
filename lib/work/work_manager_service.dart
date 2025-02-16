@@ -1,6 +1,6 @@
 
 
-import 'package:flutter_test_demo/work/worker_callback_dispatcker.dart';
+import 'package:flutter_test_demo/work/worker_callback_dispatcher.dart';
 import 'package:workmanager/workmanager.dart';
 
 /// A service class to manage Workmanager tasks.
@@ -14,7 +14,7 @@ class WorkmanagerService {
   /// Initializes the Workmanager with the [callbackDispatcher].
   Future<void> init() async {
     await _workmanager.initialize(
-      WorkerCallbackDispatcker.onExecutedWorker,
+      onExecutedWorker,
       isInDebugMode: true,
     );
   }
