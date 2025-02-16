@@ -35,7 +35,7 @@ class _NotificationPageState extends State<NotificationPage> {
         Navigator.pushNamed(
           context,
           AppRouter.detail,
-          arguments: payload,
+          arguments: id,
         );
       }
     });
@@ -128,7 +128,9 @@ class _NotificationPageState extends State<NotificationPage> {
 
   void _runPeriodicTask(BuildContext context) {
     final periodicTaskWorker = context.read<PeriodicTaskWorker>();
-    periodicTaskWorker.runPeriodicTask();
+    periodicTaskWorker.runPeriodicTask(
+      payload: null,
+    );
   }
 
   void _cancelPeriodicTask(BuildContext context) {

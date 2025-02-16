@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_test_demo/work/worker_callback_dispatcher.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -19,7 +17,6 @@ class WorkmanagerService {
     );
   }
 
-  
   /// Schedules a one-off background task using Workmanager.
   ///
   /// This method registers a uniquely identified background task that executes once
@@ -83,14 +80,24 @@ class WorkmanagerService {
     required Duration frequency,
     String? payload,
   }) async {
+    if (payload != null) {
+      await _workmanager.registerPeriodicTask(
+        uniqueName,
+        taskName,
+        frequency: frequency,
+        initialDelay: frequency,
+        inputData: {
+          "data": payload,
+        },
+      );
+      return;
+    }
+
     await _workmanager.registerPeriodicTask(
       uniqueName,
       taskName,
       frequency: frequency,
       initialDelay: frequency,
-      inputData: {
-        "data": payload,
-      },
     );
   }
 
