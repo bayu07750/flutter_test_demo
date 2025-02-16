@@ -43,7 +43,7 @@ void onExecutedWorker() {
               ..configureLocalTimeZone();
 
             localNotificationService.showNotification(
-              id: Random.generateRandom(),
+              id: todo.id,
               title: todo.title,
               body: todo.completed.toString(),
               payload: todo.id.toString(),
@@ -68,7 +68,7 @@ void onExecutedWorker() {
             ..configureLocalTimeZone();
 
           localNotificationService.showNotification(
-            id: Random.generateRandom(),
+            id: todo.id,
             title: todo.title,
             body: todo.completed.toString(),
             payload: todo.id.toString(),

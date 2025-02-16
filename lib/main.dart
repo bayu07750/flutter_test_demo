@@ -99,11 +99,12 @@ void main() async {
   );
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.initialRoute, this.payload});
+  MyApp({super.key, required this.initialRoute, this.payload});
 
   final String initialRoute;
-  final String? payload;
+  String? payload;
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +135,7 @@ class MyApp extends StatelessWidget {
 
           if (payload != null) {
             id = int.tryParse(payload!) ?? -1;
+            payload = null;
           } else {
             id = ModalRoute.of(context)!.settings.arguments as int;
           }
