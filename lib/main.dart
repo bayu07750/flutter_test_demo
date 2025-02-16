@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ void main() async {
   String route = AppRouter.initial;
   String? payload;
 
-  /// This block checks if the application was launched as a result of a notification click 
+  /// This block checks if the application was launched as a result of a notification click
   /// while the app was in the background. If so, it retrieves the notification response data,
   /// sets the appropriate routing to navigate to the detail view, and extracts any payload
   /// associated with the notification. The use of the null-aware operator ensures that if
@@ -51,21 +51,8 @@ void main() async {
     print('[${record.loggerName}] ${record.level.name}: ${record.time}: ${record.message}');
   });
 
-  runApp(MyApp(
-    initialRoute: route,
-    payload: payload,
-  ));
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.initialRoute, this.payload});
-
-  final String initialRoute;
-  final String? payload;
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
+  runApp(
+    MultiProvider(
       providers: [
         Provider<NetworkDataSource>(
           create: (context) {
@@ -103,41 +90,56 @@ class MyApp extends StatelessWidget {
         ),
       ],
       builder: (context, child) {
-        return MaterialApp(
-          title: 'Flutter Demo',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
-            useMaterial3: true,
-          ),
-          initialRoute: initialRoute,
-          routes: {
-            AppRouter.initial: (context) {
-              return HomePage();
-            },
-            AppRouter.notification: (context) {
-              return ChangeNotifierProvider(
-                  create: (context) {
-                    return NotificationProvider(localNotificationService: context.read())..requestPermission();
-                  },
-                  builder: (context, child) {
-                    return const NotificationPage();
-                  },
-              );
-            },
-            AppRouter.detail: (context) {
-              final int id;
-
-              if (payload != null) {
-                id = int.tryParse(payload!) ?? -1;
-              } else {
-                id = ModalRoute.of(context)!.settings.arguments as int;
-              }
-
-              return DetailPage(id: id);
-            },
-          },
+        return MyApp(
+          initialRoute: route,
+          payload: payload,
         );
+      },
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key, required this.initialRoute, this.payload});
+
+  final String initialRoute;
+  final String? payload;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
+        useMaterial3: true,
+      ),
+      initialRoute: initialRoute,
+      routes: {
+        AppRouter.initial: (context) {
+          return HomePage();
+        },
+        AppRouter.notification: (context) {
+          return ChangeNotifierProvider(
+            create: (context) {
+              return NotificationProvider(localNotificationService: context.read())..requestPermission();
+            },
+            builder: (context, child) {
+              return const NotificationPage();
+            },
+          );
+        },
+        AppRouter.detail: (context) {
+          final int id;
+
+          if (payload != null) {
+            id = int.tryParse(payload!) ?? -1;
+          } else {
+            id = ModalRoute.of(context)!.settings.arguments as int;
+          }
+
+          return DetailPage(id: id);
+        },
       },
     );
   }

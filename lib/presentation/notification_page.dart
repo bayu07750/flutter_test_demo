@@ -1,45 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_test_demo/app_router.dart';
 import 'package:flutter_test_demo/notification/local_notification_service.dart';
 import 'package:flutter_test_demo/provider/notification_provider.dart';
 import 'package:flutter_test_demo/utils/random.dart';
 import 'package:flutter_test_demo/work/periodic_task_worker.dart';
 import 'package:provider/provider.dart';
 
-class NotificationPage extends StatefulWidget {
+class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
-
-  @override
-  State<NotificationPage> createState() => _NotificationPageState();
-}
-
-class _NotificationPageState extends State<NotificationPage> {
-  @override
-  void initState() {
-    _configureSelectNotificationSubject();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    selectNotificationStream.close();
-    super.dispose();
-  }
-
-  void _configureSelectNotificationSubject() {
-    selectNotificationStream.stream.listen((String? payload) {
-      final id = int.tryParse(payload ?? '-1') ?? -1;
-      if (id != -1) {
-        Navigator.pushNamed(
-          context,
-          AppRouter.detail,
-          arguments: id,
-        );
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
