@@ -123,7 +123,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   void _cancelScheduleNotification(BuildContext context) {
     final notificationService = context.read<LocalNotificationService>();
-    notificationService.cancelNotification(1000);
+    notificationService.cancelNotification(1001);
   }
 
   void _runPeriodicTask(BuildContext context) {

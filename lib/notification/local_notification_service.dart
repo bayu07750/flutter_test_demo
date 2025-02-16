@@ -147,15 +147,15 @@ class LocalNotificationService {
       now.year,
       now.month,
       now.day,
-      now.hour,
-      now.minute + 5,
-      now.second,
-      now.millisecond,
-      now.microsecond,
+      5,
     );
 
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    if (kDebugMode) {
+      scheduledDate = now.add(const Duration(seconds: 15));
     }
 
     return scheduledDate;
