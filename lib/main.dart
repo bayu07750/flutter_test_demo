@@ -11,75 +11,12 @@ import 'package:flutter_test_demo/presentation/detail_page.dart';
 import 'package:flutter_test_demo/presentation/home_page.dart';
 import 'package:flutter_test_demo/presentation/notification_page.dart';
 import 'package:flutter_test_demo/provider/notification_provider.dart';
-import 'package:flutter_test_demo/utils/random.dart';
+import 'package:flutter_test_demo/work/one_off_task_worker.dart';
+import 'package:flutter_test_demo/work/periodic_task_worker.dart';
 import 'package:flutter_test_demo/work/work_manager_service.dart';
 import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import 'package:workmanager/workmanager.dart';
-
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    final NetworkDataSource networkDataSource = HttpNetworkDataSource(
-      client: InterceptedClient.build(
-        interceptors: [
-          NetworkLoggerInterceptor(),
-        ],
-      ),
-    );
-
-    if (task == 'com.example.flutter_test_demo.oneoff' ||
-        task == 'run.oneoff' ||
-        task == Workmanager.iOSBackgroundTask) {
-      print("inputData: $inputData");
-      final String payload = inputData!['data'] ?? '';
-      final int id = int.tryParse(payload) ?? -1;
-      if (id != -1) {
-        final result = await networkDataSource.fetchTodoById(id);
-        result.fold(
-          (error) {
-            /// TODO ignore
-          },
-          (todo) {
-            /// TODO show notification
-            final localNotificationService = LocalNotificationService()
-              ..init()
-              ..configureLocalTimeZone();
-            localNotificationService.showNotification(
-              id: Random.generateRandom(),
-              title: todo.title,
-              body: todo.completed.toString(),
-              payload: todo.id.toString(),
-            );
-          },
-        );
-      }
-    } else if (task == 'run.periodic' || task == 'com.example.myapp.periodic') {
-      int randomNumber = Random.generateRandom();
-      final result = await networkDataSource.fetchTodoById(randomNumber);
-      result.fold(
-        (error) {
-          /// TODO ignore
-        },
-        (todo) {
-          /// TODO show notification
-          final localNotificationService = LocalNotificationService()
-            ..init()
-            ..configureLocalTimeZone();
-          localNotificationService.showNotification(
-            id: Random.generateRandom(),
-            title: todo.title,
-            body: todo.completed.toString(),
-            payload: todo.id.toString(),
-          );
-        },
-      );
-    }
-
-    return Future.value(true);
-  });
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,12 +26,26 @@ void main() async {
   String route = AppRouter.initial;
   String? payload;
 
+  /// This block checks if the application was launched as a result of a notification click 
+  /// while the app was in the background. If so, it retrieves the notification response data,
+  /// sets the appropriate routing to navigate to the detail view, and extracts any payload
+  /// associated with the notification. The use of the null-aware operator ensures that if
+  /// the notification launch details are unavailable, the app does not crash, defaulting the
+  /// condition to false.
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     final notificationResponse = notificationAppLaunchDetails!.notificationResponse;
     route = AppRouter.detail;
     payload = notificationResponse?.payload;
   }
 
+  /// Registers and configures the global logger for the application.
+  ///
+  /// Sets the logging level based on the app's build mode:
+  /// - In debug or profile mode, logging is enabled at the most verbose level ([Level.ALL]).
+  /// - Otherwise, logging is disabled ([Level.OFF]).
+  ///
+  /// Also sets up a listener on the logger's records that prints each log entry
+  /// with details including the logger name, log level, timestamp, and message.
   Logger.root.level = kDebugMode || kProfileMode ? Level.ALL : Level.OFF;
   Logger.root.onRecord.listen((record) {
     print('[${record.loggerName}] ${record.level.name}: ${record.time}: ${record.message}');
@@ -138,7 +89,17 @@ class MyApp extends StatelessWidget {
             return WorkmanagerService()..init();
           },
           lazy: false,
-        )
+        ),
+        Provider(
+          create: (context) {
+            return OneOffTaskWorker(workmanagerService: context.read());
+          },
+        ),
+        Provider(
+          create: (context) {
+            return PeriodicTaskWorker(workmanagerService: context.read());
+          },
+        ),
       ],
       builder: (context, child) {
         return MaterialApp(
@@ -150,15 +111,19 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: initialRoute,
           routes: {
-            AppRouter.initial: (context) => HomePage(),
-            AppRouter.notification: (context) => ChangeNotifierProvider(
+            AppRouter.initial: (context) {
+              return HomePage();
+            },
+            AppRouter.notification: (context) {
+              return ChangeNotifierProvider(
                   create: (context) {
                     return NotificationProvider(localNotificationService: context.read())..requestPermission();
                   },
                   builder: (context, child) {
                     return const NotificationPage();
                   },
-                ),
+              );
+            },
             AppRouter.detail: (context) {
               final int id;
 

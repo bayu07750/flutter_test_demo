@@ -5,6 +5,7 @@ import 'package:flutter_test_demo/app_router.dart';
 import 'package:flutter_test_demo/notification/local_notification_service.dart';
 import 'package:flutter_test_demo/provider/notification_provider.dart';
 import 'package:flutter_test_demo/utils/random.dart';
+import 'package:flutter_test_demo/work/periodic_task_worker.dart';
 import 'package:provider/provider.dart';
 
 class NotificationPage extends StatefulWidget {
@@ -46,30 +47,45 @@ class _NotificationPageState extends State<NotificationPage> {
       appBar: AppBar(
         title: const Text('Notification'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text('Notification permission: ${context.watch<NotificationProvider>().isNotificationGranted}'),
-          ElevatedButton(
-            onPressed: () {
-              _showNotification(context);
-            },
-            child: const Text('Show Notification'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _scheduleNotification(context);
-            },
-            child: Text('Bangunkan Sholat Shubuh'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _cancelScheduleNotification(context);
-            },
-            child: Text('Jangan Bangunkan Sholat Shubuh'),
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Notification permission: ${context.watch<NotificationProvider>().isNotificationGranted}'),
+            ElevatedButton(
+              onPressed: () {
+                _showNotification(context);
+              },
+              child: const Text('Show Notification'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _scheduleNotification(context);
+              },
+              child: Text('Bangunkan Sholat Shubuh'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _cancelScheduleNotification(context);
+              },
+              child: Text('Jangan Bangunkan Sholat Shubuh'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _runPeriodicTask(context);
+              },
+              child: Text('Tampilkan Random Todo Notification'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _cancelPeriodicTask(context);
+              },
+              child: Text('Batalkan Tampilkan Random Todo Notification'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -95,5 +111,15 @@ class _NotificationPageState extends State<NotificationPage> {
   void _cancelScheduleNotification(BuildContext context) {
     final notificationService = context.read<LocalNotificationService>();
     notificationService.cancelNotification(1000);
+  }
+
+  void _runPeriodicTask(BuildContext context) {
+    final periodicTaskWorker = context.read<PeriodicTaskWorker>();
+    periodicTaskWorker.runPeriodicTask();
+  }
+
+  void _cancelPeriodicTask(BuildContext context) {
+    final periodicTaskWorker = context.read<PeriodicTaskWorker>();
+    periodicTaskWorker.cancelPeriodicTask();
   }
 }
